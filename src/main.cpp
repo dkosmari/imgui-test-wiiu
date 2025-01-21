@@ -1,25 +1,25 @@
-#include <array>
 #include <algorithm>
-#include <iostream>
-#include <vector>
-#include <memory>
+#include <array>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
+#include <memory>
+#include <vector>
 
 #include <SDL.h>
 
 #ifdef __WIIU__
 #include <coreinit/filesystem.h>
+#include <coreinit/memory.h>
 #include <gx2/context.h>
 #include <nn/swkbd.h>
-#include <vpad/input.h>
+#include <padscore/kpad.h>
 #include <sys/iosupport.h>
+#include <vpad/input.h>
 #include <whb/log.h>
 #include <whb/log_module.h>
 #include <whb/log_udp.h>
-#include <coreinit/memory.h>
-#include <padscore/kpad.h>
 #endif
 
 #include "imgui.h"
@@ -464,8 +464,6 @@ try
         return -1;
     }
 
-    std::vector<SDL_GameController*> controllers;
-
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -705,10 +703,8 @@ try
                 case SDL_CONTROLLERDEVICEADDED:
                 {
                     auto ctr = SDL_GameControllerOpen(event.cdevice.which);
-                    if (ctr) {
+                    if (ctr)
                         cout << "Controller opened: " << SDL_GameControllerName(ctr) << endl;
-                        controllers.push_back(ctr);
-                    }
                     break;
                 }
                 case SDL_CONTROLLERDEVICEREMOVED:
@@ -717,7 +713,6 @@ try
                     if (ctr) {
                         cout << "removed controller: " << SDL_GameControllerName(ctr) << endl;
                         SDL_GameControllerClose(ctr);
-                        std::erase(controllers, ctr);
                     }
                     break;
                 }
@@ -783,11 +778,6 @@ try
  stop_events:
 
     cout << "Stopped processing events" << endl;
-
-
-    for (auto& c : controllers)
-        SDL_GameControllerClose(c);
-    controllers.clear();
 
 
     ImGui_ImplSDLRenderer2_Shutdown();
