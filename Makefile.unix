@@ -11,7 +11,7 @@ SOURCES := \
 	src/imgui/imgui_draw.cpp \
 	src/imgui/imgui_tables.cpp \
 	src/imgui/imgui_widgets.cpp \
-	src/imgui_impl_sdl2_mod.cpp \
+	src/imgui/backends/imgui_impl_sdl2.cpp \
 	src/imgui/backends/imgui_impl_sdlrenderer2.cpp
 
 
@@ -23,7 +23,7 @@ CPPFLAGS := \
 	-DIMGUI_DEFINE_MATH_OPERATORS=1
 
 CXX ?= g++
-CXX += -std=c++20
+CXX += -std=c++23
 
 CXXFLAGS := -Wall -Wextra -Werror -Og -ggdb -g3
 
@@ -32,14 +32,7 @@ LDFLAGS := \
 
 OBJECTS := $(SOURCES:.cpp=.o)
 
-
-DEPSDIR := .deps
-DEPSFILES := $(addprefix $(DEPSDIR)/,$(OBJECTS:.o=.d))
-DEPSDIRS := $(sort $(dir $(DEPSFILES)))
-DEPSARGS = -MMD -MP -MF $(DEPSDIR)/$(@:%.o=%.d)
-
-
-.PHONY: all clean company $(DEPSDIRS) run
+.PHONY: all clean company run
 
 
 all: $(DEPSDIR) $(TARGET)
@@ -51,20 +44,12 @@ clean:
 	$(RM) -r $(DEPSDIR)
 
 
-$(DEPSDIR):
-	mkdir -p $(DEPSDIRS)
-
-
--include $(DEPSFILES)
-
-
 $(TARGET): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 
-.cpp.o:
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(DEPSARGS) -c $< -o $@
-
+%.o: %.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 
 company: compile_flags.txt
@@ -76,3 +61,4 @@ compile_flags.txt: $(firstword $(MAKEFILE_LIST))
 
 run: $(TARGET)
 	./$(TARGET)
+

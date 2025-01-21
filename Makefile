@@ -1,5 +1,3 @@
-# -*- mode: makefile -*-
-
 V := 1
 
 include $(DEVKITPRO)/wut/share/wut_rules
@@ -36,7 +34,7 @@ CPPFLAGS := \
 
 
 CXX ?= g++
-CXX += -std=c++20
+CXX += -std=c++23
 
 CXXFLAGS := \
 	-Wall -Wextra -Werror \
@@ -76,10 +74,6 @@ $(WUHB_TARGET): $(RPX_TARGET)
 		--short-name="imgui-test"
 
 
-run: $(WUHB_TARGET)
-	WIILOAD=tcp:wiiu wiiload $<
-
-
 %.o: %.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
@@ -90,3 +84,8 @@ company: compile_flags.txt
 compile_flags.txt: $(firstword $(MAKEFILE_LIST))
 	printf "%s" "$(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS)" | xargs -n1 | sort -u > compile_flags.txt
 	$(CPP) -xc++ /dev/null -E -Wp,-v 2>&1 | sed -n 's,^ ,-I,p' >> compile_flags.txt
+
+
+run: $(WUHB_TARGET)
+	WIILOAD=tcp:wiiu wiiload $<
+
