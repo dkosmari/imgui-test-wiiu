@@ -1,0 +1,78 @@
+# -*- mode: makefile -*-
+
+TARGET := imgui-test
+
+
+SOURCES := \
+	src/main.cpp \
+	src/show.cpp \
+	src/imgui/imgui.cpp \
+	src/imgui/imgui_demo.cpp \
+	src/imgui/imgui_draw.cpp \
+	src/imgui/imgui_tables.cpp \
+	src/imgui/imgui_widgets.cpp \
+	src/imgui_impl_sdl2_mod.cpp \
+	src/imgui/backends/imgui_impl_sdlrenderer2.cpp
+
+
+PKGCONFIG := pkg-config
+
+CPPFLAGS := \
+	$(shell $(PKGCONFIG) --cflags sdl2) \
+	-Isrc/imgui \
+	-DIMGUI_DEFINE_MATH_OPERATORS=1
+
+CXX ?= g++
+CXX += -std=c++20
+
+CXXFLAGS := -Wall -Wextra -Werror -Og -ggdb -g3
+
+LDFLAGS := \
+	$(shell $(PKGCONFIG) --libs sdl2)
+
+OBJECTS := $(SOURCES:.cpp=.o)
+
+
+DEPSDIR := .deps
+DEPSFILES := $(addprefix $(DEPSDIR)/,$(OBJECTS:.o=.d))
+DEPSDIRS := $(sort $(dir $(DEPSFILES)))
+DEPSARGS = -MMD -MP -MF $(DEPSDIR)/$(@:%.o=%.d)
+
+
+.PHONY: all clean company $(DEPSDIRS) run
+
+
+all: $(DEPSDIR) $(TARGET)
+
+
+clean:
+	$(RM) $(TARGET)
+	$(RM) $(OBJECTS)
+	$(RM) -r $(DEPSDIR)
+
+
+$(DEPSDIR):
+	mkdir -p $(DEPSDIRS)
+
+
+-include $(DEPSFILES)
+
+
+$(TARGET): $(OBJECTS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+
+
+.cpp.o:
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(DEPSARGS) -c $< -o $@
+
+
+
+company: compile_flags.txt
+
+compile_flags.txt: $(firstword $(MAKEFILE_LIST))
+	printf "%s" "$(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS)" | xargs -n1 | sort -u > compile_flags.txt
+	$(CPP) -xc++ /dev/null -E -Wp,-v 2>&1 | sed -n 's,^ ,-I,p' >> compile_flags.txt
+
+
+run: $(TARGET)
+	./$(TARGET)

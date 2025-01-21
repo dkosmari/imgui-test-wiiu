@@ -1,0 +1,9 @@
+syntax: glob
+
+*~
+*.o
+src/imgui-old
+*.wuhb
+*.elf
+*.rpx
+*.ttf
