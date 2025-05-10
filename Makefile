@@ -3,7 +3,7 @@ V := 1
 include $(DEVKITPRO)/wut/share/wut_rules
 
 
-TARGET := imgui-test.elf
+TARGET := imgui-test-wiiu.elf
 
 RPX_TARGET := $(TARGET:.elf=.rpx)
 WUHB_TARGET := $(RPX_TARGET:.rpx=.wuhb)
