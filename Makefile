@@ -8,17 +8,17 @@ TARGET := imgui-test.elf
 RPX_TARGET := $(TARGET:.elf=.rpx)
 WUHB_TARGET := $(RPX_TARGET:.rpx=.wuhb)
 
-
 SOURCES := \
 	src/main.cpp \
-	src/show.cpp \
-	src/imgui/imgui.cpp \
-	src/imgui/imgui_demo.cpp \
-	src/imgui/imgui_draw.cpp \
-	src/imgui/imgui_tables.cpp \
-	src/imgui/imgui_widgets.cpp \
-	src/imgui/backends/imgui_impl_sdl2.cpp \
-	src/imgui/backends/imgui_impl_sdlrenderer2.cpp
+	src/sdl_debug.cpp \
+	src/stdout.cpp \
+	external/imgui/imgui.cpp \
+	external/imgui/imgui_demo.cpp \
+	external/imgui/imgui_draw.cpp \
+	external/imgui/imgui_tables.cpp \
+	external/imgui/imgui_widgets.cpp \
+	external/imgui/backends/imgui_impl_sdl2.cpp \
+	external/imgui/backends/imgui_impl_sdlrenderer2.cpp
 
 
 PKGCONFIG := powerpc-eabi-pkg-config
@@ -27,7 +27,7 @@ CPPFLAGS := \
 	-DESPRESSO -D__WIIU__ -D__WUT__ \
 	-I$(WUT_ROOT)/include \
 	$(shell $(PKGCONFIG) --cflags sdl2) \
-	-Isrc/imgui \
+	-Iexternal/imgui \
 	-DIMGUI_DISABLE_DEFAULT_SHELL_FUNCTIONS \
 	-DIMGUI_DEFINE_MATH_OPERATORS=1 \
 	-DIMGUI_RGBA_BE

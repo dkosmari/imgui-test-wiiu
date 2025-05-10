@@ -5,22 +5,23 @@ TARGET := imgui-test
 
 SOURCES := \
 	src/main.cpp \
-	src/show.cpp \
-	src/imgui/imgui.cpp \
-	src/imgui/imgui_demo.cpp \
-	src/imgui/imgui_draw.cpp \
-	src/imgui/imgui_tables.cpp \
-	src/imgui/imgui_widgets.cpp \
-	src/imgui/backends/imgui_impl_sdl2.cpp \
-	src/imgui/backends/imgui_impl_sdlrenderer2.cpp
+	src/sdl_debug.cpp \
+	external/imgui/imgui.cpp \
+	external/imgui/imgui_demo.cpp \
+	external/imgui/imgui_draw.cpp \
+	external/imgui/imgui_tables.cpp \
+	external/imgui/imgui_widgets.cpp \
+	external/imgui/backends/imgui_impl_sdl2.cpp \
+	external/imgui/backends/imgui_impl_sdlrenderer2.cpp
 
 
 PKGCONFIG := pkg-config
 
 CPPFLAGS := \
 	$(shell $(PKGCONFIG) --cflags sdl2) \
-	-Isrc/imgui \
+	-Iexternal/imgui \
 	-DIMGUI_DEFINE_MATH_OPERATORS=1
+
 
 CXX ?= g++
 CXX += -std=c++23
@@ -35,7 +36,7 @@ OBJECTS := $(SOURCES:.cpp=.o)
 .PHONY: all clean company run
 
 
-all: $(DEPSDIR) $(TARGET)
+all: $(TARGET)
 
 
 clean:
